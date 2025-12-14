@@ -1,8 +1,15 @@
-
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
 from sqlalchemy.orm import DeclarativeBase
 
 from app.config import get_settings
+
+
+def get_async_database_url(url: str) -> str:
+    if url.startswith("postgresql://"):
+        return url.replace("postgresql://", "postgresql+asyncpg://", 1)
+    if url.startswith("postgres://"):
+        return url.replace("postgres://", "postgresql+asyncpg://", 1)
+    return url
 
 
 class Base(DeclarativeBase):
@@ -16,13 +23,14 @@ class Database:
     @classmethod
     async def connect(cls) -> None:
         settings = get_settings()
+        database_url = get_async_database_url(settings.database_url)
 
         connect_args = {}
         if settings.is_sqlite:
             connect_args["check_same_thread"] = False
 
         cls.engine = create_async_engine(
-            settings.database_url,
+            database_url,
             echo=settings.debug,
             connect_args=connect_args if settings.is_sqlite else {},
         )
