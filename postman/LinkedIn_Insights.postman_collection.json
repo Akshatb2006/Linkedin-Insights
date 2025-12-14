@@ -1,0 +1,445 @@
+{
+    "info": {
+        "_postman_id": "linkedin-insights-api",
+        "name": "LinkedIn Insights Microservice",
+        "description": "API collection for LinkedIn Insights Microservice. This service allows you to fetch, store, and query LinkedIn company page insights.\n\n## Getting Started\n\n1. Start the server: `uvicorn app.main:app --reload --port 8000`\n2. Make sure MongoDB is running\n3. Use the endpoints below to interact with the API\n\n## Data Flow\n\n1. Call `GET /pages/{page_id}` with a LinkedIn company ID\n2. If the page doesn't exist, it will be scraped from LinkedIn\n3. Use search and filter endpoints to query stored data",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "variable": [
+        {
+            "key": "base_url",
+            "value": "http://localhost:8000",
+            "type": "string"
+        },
+        {
+            "key": "api_prefix",
+            "value": "/api/v1",
+            "type": "string"
+        }
+    ],
+    "item": [
+        {
+            "name": "Health",
+            "item": [
+                {
+                    "name": "Health Check",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/health",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                "health"
+                            ]
+                        },
+                        "description": "Check if the service is healthy and running."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Root",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}/",
+                            "host": [
+                                "{{base_url}}"
+                            ],
+                            "path": [
+                                ""
+                            ]
+                        },
+                        "description": "Get welcome message and API info."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Pages",
+            "item": [
+                {
+                    "name": "Get Page Details",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}{{api_prefix}}/pages/deepsolv",
+                            "host": [
+                                "{{base_url}}{{api_prefix}}"
+                            ],
+                            "path": [
+                                "pages",
+                                "deepsolv"
+                            ],
+                            "query": [
+                                {
+                                    "key": "force_refresh",
+                                    "value": "false",
+                                    "description": "Set to true to re-scrape the page even if it exists",
+                                    "disabled": true
+                                }
+                            ]
+                        },
+                        "description": "Get details of a LinkedIn company page by its page ID.\n\nIf the page doesn't exist in the database, it will be automatically scraped from LinkedIn.\n\n**Example page IDs:**\n- deepsolv\n- microsoft\n- google\n- amazon"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Page Details (Force Refresh)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}{{api_prefix}}/pages/deepsolv?force_refresh=true",
+                            "host": [
+                                "{{base_url}}{{api_prefix}}"
+                            ],
+                            "path": [
+                                "pages",
+                                "deepsolv"
+                            ],
+                            "query": [
+                                {
+                                    "key": "force_refresh",
+                                    "value": "true",
+                                    "description": "Force re-scrape from LinkedIn"
+                                }
+                            ]
+                        },
+                        "description": "Force refresh page data by re-scraping from LinkedIn."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search Pages",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}{{api_prefix}}/pages/?page=1&limit=10",
+                            "host": [
+                                "{{base_url}}{{api_prefix}}"
+                            ],
+                            "path": [
+                                "pages",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "name",
+                                    "value": "tech",
+                                    "description": "Partial match on page name",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "industry",
+                                    "value": "Technology",
+                                    "description": "Filter by industry",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "min_followers",
+                                    "value": "10000",
+                                    "description": "Minimum follower count",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "max_followers",
+                                    "value": "100000",
+                                    "description": "Maximum follower count",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number (1-indexed)"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10",
+                                    "description": "Items per page"
+                                }
+                            ]
+                        },
+                        "description": "Search for pages in the database with optional filters.\n\n**Note:** This endpoint only searches the database. It does NOT scrape LinkedIn.\n\n**Available Filters:**\n- name: Partial match (case-insensitive)\n- industry: Exact match (case-insensitive)\n- min_followers: Minimum follower count\n- max_followers: Maximum follower count"
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search by Name",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}{{api_prefix}}/pages/?name=deep&page=1&limit=10",
+                            "host": [
+                                "{{base_url}}{{api_prefix}}"
+                            ],
+                            "path": [
+                                "pages",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "name",
+                                    "value": "deep",
+                                    "description": "Partial match on page name"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                }
+                            ]
+                        },
+                        "description": "Search pages by name with partial matching."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search by Industry",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}{{api_prefix}}/pages/?industry=Technology&page=1&limit=10",
+                            "host": [
+                                "{{base_url}}{{api_prefix}}"
+                            ],
+                            "path": [
+                                "pages",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "industry",
+                                    "value": "Technology",
+                                    "description": "Filter by industry"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                }
+                            ]
+                        },
+                        "description": "Search pages by industry."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Search by Follower Range",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}{{api_prefix}}/pages/?min_followers=20000&max_followers=40000&page=1&limit=10",
+                            "host": [
+                                "{{base_url}}{{api_prefix}}"
+                            ],
+                            "path": [
+                                "pages",
+                                ""
+                            ],
+                            "query": [
+                                {
+                                    "key": "min_followers",
+                                    "value": "20000",
+                                    "description": "Minimum follower count"
+                                },
+                                {
+                                    "key": "max_followers",
+                                    "value": "40000",
+                                    "description": "Maximum follower count"
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10"
+                                }
+                            ]
+                        },
+                        "description": "Search pages with follower count between 20k and 40k."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete Page",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}{{api_prefix}}/pages/deepsolv",
+                            "host": [
+                                "{{base_url}}{{api_prefix}}"
+                            ],
+                            "path": [
+                                "pages",
+                                "deepsolv"
+                            ]
+                        },
+                        "description": "Delete a page and all related data (posts, comments, employees)."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Posts",
+            "item": [
+                {
+                    "name": "Get Page Posts",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}{{api_prefix}}/pages/deepsolv/posts?page=1&limit=10",
+                            "host": [
+                                "{{base_url}}{{api_prefix}}"
+                            ],
+                            "path": [
+                                "pages",
+                                "deepsolv",
+                                "posts"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number (1-indexed)"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10",
+                                    "description": "Items per page (max 50)"
+                                }
+                            ]
+                        },
+                        "description": "Get posts from a LinkedIn company page with pagination.\n\nPosts are scraped when you first fetch the page details."
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get Page Posts (Page 2)",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}{{api_prefix}}/pages/deepsolv/posts?page=2&limit=5",
+                            "host": [
+                                "{{base_url}}{{api_prefix}}"
+                            ],
+                            "path": [
+                                "pages",
+                                "deepsolv",
+                                "posts"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "2",
+                                    "description": "Page number"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "5",
+                                    "description": "Items per page"
+                                }
+                            ]
+                        },
+                        "description": "Get the second page of posts with 5 items per page."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "People/Employees",
+            "item": [
+                {
+                    "name": "Get Page Employees",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}{{api_prefix}}/pages/deepsolv/people?page=1&limit=10",
+                            "host": [
+                                "{{base_url}}{{api_prefix}}"
+                            ],
+                            "path": [
+                                "pages",
+                                "deepsolv",
+                                "people"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number (1-indexed)"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10",
+                                    "description": "Items per page (max 50)"
+                                }
+                            ]
+                        },
+                        "description": "Get employees/people working at a LinkedIn company page.\n\nEmployee data is scraped when you first fetch the page details."
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "Comments",
+            "item": [
+                {
+                    "name": "Get Page Comments",
+                    "request": {
+                        "method": "GET",
+                        "header": [],
+                        "url": {
+                            "raw": "{{base_url}}{{api_prefix}}/pages/deepsolv/comments?page=1&limit=10",
+                            "host": [
+                                "{{base_url}}{{api_prefix}}"
+                            ],
+                            "path": [
+                                "pages",
+                                "deepsolv",
+                                "comments"
+                            ],
+                            "query": [
+                                {
+                                    "key": "page",
+                                    "value": "1",
+                                    "description": "Page number (1-indexed)"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "10",
+                                    "description": "Items per page (max 50)"
+                                }
+                            ]
+                        },
+                        "description": "Get all comments from a company's posts.\n\n**Note:** Due to LinkedIn's dynamic loading, not all comments may be captured during scraping."
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}
